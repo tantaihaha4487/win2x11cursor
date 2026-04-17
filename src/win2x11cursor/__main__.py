@@ -1,4 +1,4 @@
-from x11_cursor_convertor.cli import main
+from win2x11cursor.cli import main
 
 
 if __name__ == "__main__":

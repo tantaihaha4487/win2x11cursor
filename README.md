@@ -1,8 +1,8 @@
-# X11 Cursor Convertor
+# win2x11cursor
 
 Convert a Windows cursor theme folder with `.ani` / `.cur` files into an installable X11/Xcursor theme.
 
-This project ships a small Python CLI and uses `win2xcur` for the cursor parsing and Xcursor writing work.
+`win2x11cursor` is a small Python CLI that uses `win2xcur` for the cursor parsing and Xcursor writing work.
 
 ## What it does
 
@@ -42,37 +42,37 @@ Install the app into the virtual environment:
 Convert a theme folder named `MyCursorTheme` into `build/MyCursorTheme`:
 
 ```bash
-.venv/bin/x11-cursor-convertor MyCursorTheme
+.venv/bin/win2x11cursor MyCursorTheme
 ```
 
 Choose a different output root:
 
 ```bash
-.venv/bin/x11-cursor-convertor MyCursorTheme --output out
+.venv/bin/win2x11cursor MyCursorTheme --output out
 ```
 
 Override the output theme folder name:
 
 ```bash
-.venv/bin/x11-cursor-convertor MyCursorTheme --theme-dir MyCursorTheme-X11
+.venv/bin/win2x11cursor MyCursorTheme --theme-dir MyCursorTheme-X11
 ```
 
 Replace an existing generated theme:
 
 ```bash
-.venv/bin/x11-cursor-convertor MyCursorTheme --force
+.venv/bin/win2x11cursor MyCursorTheme --force
 ```
 
 Convert and install to `~/.local/share/icons`:
 
 ```bash
-.venv/bin/x11-cursor-convertor MyCursorTheme --install --force
+.venv/bin/win2x11cursor MyCursorTheme --install --force
 ```
 
 Show CLI help:
 
 ```bash
-.venv/bin/x11-cursor-convertor --help
+.venv/bin/win2x11cursor --help
 ```
 
 ## Generated theme layout

@@ -59,7 +59,7 @@ SCHEME_PREFIXES = (
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="x11-cursor-convertor",
+        prog="win2x11cursor",
         description="Convert a Windows cursor theme folder into an installable Xcursor theme.",
     )
     parser.add_argument(

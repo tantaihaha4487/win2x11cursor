@@ -3,7 +3,7 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "x11-cursor-convertor"
+name = "win2x11cursor"
 version = "0.1.0"
 description = "Convert Windows cursor themes into installable X11/Xcursor themes"
 readme = "README.md"
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-x11-cursor-convertor = "x11_cursor_convertor.cli:main"
+win2x11cursor = "win2x11cursor.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
