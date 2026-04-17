@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.so
 
+Emu/
 build/
 dist/
 *.egg-info/
