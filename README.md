@@ -1,34 +1,27 @@
 # win2x11cursor
 
-Convert a Windows cursor theme folder, archive, or download URL with `.ani` / `.cur` files into an installable X11/Xcursor theme.
-
-`win2x11cursor` is a small Python CLI that uses `win2xcur` for the cursor parsing and Xcursor writing work.
+Convert a Windows cursor theme folder, archive, or download URL into an installable X11/Xcursor theme.
 
 ## What it does
 
-- Reads a Windows theme folder, archive, or `install.inf`
-- Converts the cursors into an Xcursor theme
-- Writes a standard Linux theme layout:
-  - `index.theme`
-  - `cursors/`
-- Generates broad Xcursor aliases for better app compatibility
-- Adds mappings for the extra Windows roles in this theme:
-  - `Pin` -> `color-picker`
-  - `Person` -> `person`
+- Accepts a Windows cursor theme as a directory, `install.inf`, local archive, or direct `http`/`https` URL
+- Finds `install.inf`, reads the cursor scheme it defines, and loads the referenced `.ani` and `.cur` files
+- Writes a standard Xcursor theme directory with `index.theme` and `cursors/`
+- Generates common Xcursor aliases such as `left_ptr`, `hand2`, `xterm`, `watch`, `sb_v_double_arrow`, and `fd_double_arrow`
+- Preserves extra Windows roles that do not always exist in Linux themes, including `Pin -> color-picker` and `Person -> person`
+- Can copy the generated theme into `~/.local/share/icons` or another install root
 
 ## Requirements
 
-- Python 3.10+
-- `win2xcur`
-- ImageMagick available on the system
+- Python `>=3.10`
+- Python package `win2xcur>=0.2.0,<0.3`
+- ImageMagick available in `PATH`
 
 Optional archive tools:
 
-- `.zip` and tar-family archives work with the Python standard library
-- `.rar` needs `unrar` or `bsdtar`
-- `.7z` and `.cab` need `bsdtar`
-
-On Arch Linux that usually means `python-win2xcur` and `imagemagick`.
+- No extra tool required for `.zip`, `.tar`, `.tar.gz`, `.tgz`, `.tar.bz2`, or `.tar.xz`
+- `unrar` or `bsdtar` for `.rar`
+- `bsdtar` for `.7z` and `.cab`
 
 ## Install
 
@@ -38,15 +31,17 @@ Install from the current checkout:
 pip install .
 ```
 
-Or run it directly from a checkout during development:
+Install in editable mode during development:
 
 ```bash
 pip install -e .
 ```
 
-## Arch Linux
+## Platform-Specific Packaging
 
-This repo includes a `python-win2x11cursor-git` `PKGBUILD` for AUR-style packaging.
+### Arch Linux
+
+The repo includes a `PKGBUILD` for `win2x11cursor-git`.
 
 ```bash
 makepkg -si
@@ -54,9 +49,20 @@ makepkg -si
 
 ## Usage
 
-`source` can be a theme folder, `install.inf`, local archive, or direct HTTP(S) download URL.
+`source` can be any of the following:
 
-Convert a theme folder named `MyCursorTheme` into `build/MyCursorTheme`:
+- A directory containing `install.inf`
+- An `install.inf` file
+- A local archive
+- A direct download URL that resolves to an archive
+
+Show the full CLI help:
+
+```bash
+win2x11cursor --help
+```
+
+Convert a theme directory into `build/<theme-name>`:
 
 ```bash
 win2x11cursor MyCursorTheme
@@ -68,45 +74,60 @@ Convert a local archive:
 win2x11cursor MyCursorTheme.zip
 ```
 
-Convert and install straight from an upstream download URL:
+Convert a theme from a URL and install it immediately:
 
 ```bash
-win2x11cursor https://example.com/MyCursorTheme.zip --install --force
+win2x11cursor "https://example.com/MyCursorTheme.zip" --install --force
 ```
 
-Choose a different output root:
+Write generated files under a different output root:
 
 ```bash
 win2x11cursor MyCursorTheme --output out
 ```
 
-Override the output theme folder name:
+Override the human-readable source name before the output directory is derived:
 
 ```bash
-win2x11cursor MyCursorTheme --theme-dir MyCursorTheme-X11
+win2x11cursor MyCursorTheme --theme-name "My Cursor Theme"
 ```
 
-Replace an existing generated theme:
+Set the output directory name directly:
+
+```bash
+win2x11cursor MyCursorTheme --theme-dir my-cursor-theme
+```
+
+Change the inherited Xcursor theme or default size written to `index.theme`:
+
+```bash
+win2x11cursor MyCursorTheme --inherits Adwaita --default-size 32
+```
+
+Install into a custom icon root instead of `~/.local/share/icons`:
+
+```bash
+win2x11cursor MyCursorTheme --install --install-root ~/.icons --force
+```
+
+Replace an existing generated output or install target with the same name:
 
 ```bash
 win2x11cursor MyCursorTheme --force
 ```
 
-Convert and install to `~/.local/share/icons`:
+Successful runs print a summary that includes:
 
-```bash
-win2x11cursor MyCursorTheme --install --force
-```
+- The resolved `install.inf` path
+- The generated theme directory name
+- The output path
+- Converted cursor roles and alias counts
+- Any Windows roles that were missing from the source theme
+- The install destination when `--install` is used
 
-Show CLI help:
+## Output / Generated Layout
 
-```bash
-win2x11cursor --help
-```
-
-## Generated theme layout
-
-Example output:
+Example output layout:
 
 ```text
 build/
@@ -132,30 +153,28 @@ build/
     `-- index.theme
 ```
 
-The CLI also creates many common aliases like `left_ptr`, `hand2`, `xterm`, `watch`, `sb_v_double_arrow`, `fd_double_arrow`, and more.
+When alias symlinks are supported by the filesystem, the extra cursor names are written as symlinks. Otherwise they are copied as regular files.
 
-## Install on Linux
+## Post-Install Setup
 
-If you used `--install`, the theme is already copied into:
+If you used `--install`, the theme is copied to:
 
 ```text
-~/.local/share/icons/<theme-name>
+~/.local/share/icons/<theme-dir>
 ```
 
-If you only generated the files, copy the theme directory manually into `~/.local/share/icons/`.
-
-Then select the theme by directory name.
+If you only generated the theme, copy that directory into your icon theme path and select it by directory name.
 
 ### X11
 
-Add this to `~/.Xresources`:
+Add the theme to `~/.Xresources`:
 
 ```text
 Xcursor.theme: MyCursorTheme
 Xcursor.size: 24
 ```
 
-Then reload X resources or restart the session.
+Reload X resources or restart the session.
 
 ### GNOME
 
@@ -183,6 +202,14 @@ exec = hyprctl setcursor MyCursorTheme 24
 
 ## Notes
 
-- The theme name written into `index.theme` matches the generated folder name for safer Xcursor lookup.
-- The human-readable Windows source name is preserved in the `Comment` field.
-- If your desktop environment caches cursors, log out and back in after switching themes.
+- The generated `index.theme` uses the output directory name as `Name`, not the original Windows display name
+- The original Windows theme name is kept in the `Comment` field of `index.theme`
+- The converter looks for cursor files next to the resolved `install.inf`; if the `.ani` or `.cur` files are elsewhere, conversion fails
+- If a directory contains multiple `.inf` files, `win2x11cursor` prefers a single `install.inf`; otherwise it stops with an error instead of guessing
+- Archives are validated before extraction and rejected if they contain absolute paths or path traversal entries
+- Existing output and install directories are never overwritten unless `--force` is set
+- Some desktop environments cache cursors; if a theme change does not appear immediately, log out and back in
+
+## About
+
+`win2x11cursor` is a small Python CLI built on top of `win2xcur`.
