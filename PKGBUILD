@@ -1,18 +1,18 @@
-pkgname=python-win2x11cursor-git
+pkgname=win2x11cursor-git
 pkgver=1.0.0.r0.g0000000
 pkgrel=1
 pkgdesc="Convert Windows cursor themes into installable X11/Xcursor themes"
 arch=('any')
 url='https://github.com/tantaihaha4487/win2x11cursor'
 license=('GPL-3.0-or-later')
-depends=('python' 'python-win2xcur' 'imagemagick')
+depends=('python' 'win2xcur' 'imagemagick')
 makedepends=('git' 'python-build' 'python-installer' 'python-setuptools' 'python-wheel')
 optdepends=(
   'libarchive: extract 7z, cab, and fallback RAR archives'
   'unrar: extract RAR archives'
 )
-provides=('python-win2x11cursor')
-conflicts=('python-win2x11cursor')
+provides=('win2x11cursor')
+conflicts=('win2x11cursor')
 source=("$pkgname::git+https://github.com/tantaihaha4487/win2x11cursor.git")
 sha256sums=('SKIP')
 
