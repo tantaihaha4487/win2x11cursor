@@ -1,12 +1,12 @@
 # win2x11cursor
 
-Convert a Windows cursor theme folder with `.ani` / `.cur` files into an installable X11/Xcursor theme.
+Convert a Windows cursor theme folder, archive, or download URL with `.ani` / `.cur` files into an installable X11/Xcursor theme.
 
 `win2x11cursor` is a small Python CLI that uses `win2xcur` for the cursor parsing and Xcursor writing work.
 
 ## What it does
 
-- Reads a Windows theme folder or `install.inf`
+- Reads a Windows theme folder, archive, or `install.inf`
 - Converts the cursors into an Xcursor theme
 - Writes a standard Linux theme layout:
   - `index.theme`
@@ -19,60 +19,89 @@ Convert a Windows cursor theme folder with `.ani` / `.cur` files into an install
 ## Requirements
 
 - Python 3.10+
+- `win2xcur`
 - ImageMagick available on the system
 
-`convert` is already available in this environment, which is usually enough for `Wand` / `win2xcur` to work.
+Optional archive tools:
 
-## Setup
+- `.zip` and tar-family archives work with the Python standard library
+- `.rar` needs `unrar` or `bsdtar`
+- `.7z` and `.cab` need `bsdtar`
 
-Create the virtual environment:
+On Arch Linux that usually means `python-win2xcur` and `imagemagick`.
+
+## Install
+
+Install from the current checkout:
 
 ```bash
-python3 -m venv .venv
+pip install .
 ```
 
-Install the app into the virtual environment:
+Or run it directly from a checkout during development:
 
 ```bash
-.venv/bin/pip install -e .
+pip install -e .
+```
+
+## Arch Linux
+
+This repo includes a `python-win2x11cursor-git` `PKGBUILD` for AUR-style packaging.
+
+```bash
+makepkg -si
 ```
 
 ## Usage
 
+`source` can be a theme folder, `install.inf`, local archive, or direct HTTP(S) download URL.
+
 Convert a theme folder named `MyCursorTheme` into `build/MyCursorTheme`:
 
 ```bash
-.venv/bin/win2x11cursor MyCursorTheme
+win2x11cursor MyCursorTheme
+```
+
+Convert a local archive:
+
+```bash
+win2x11cursor MyCursorTheme.zip
+```
+
+Convert and install straight from an upstream download URL:
+
+```bash
+win2x11cursor https://example.com/MyCursorTheme.zip --install --force
 ```
 
 Choose a different output root:
 
 ```bash
-.venv/bin/win2x11cursor MyCursorTheme --output out
+win2x11cursor MyCursorTheme --output out
 ```
 
 Override the output theme folder name:
 
 ```bash
-.venv/bin/win2x11cursor MyCursorTheme --theme-dir MyCursorTheme-X11
+win2x11cursor MyCursorTheme --theme-dir MyCursorTheme-X11
 ```
 
 Replace an existing generated theme:
 
 ```bash
-.venv/bin/win2x11cursor MyCursorTheme --force
+win2x11cursor MyCursorTheme --force
 ```
 
 Convert and install to `~/.local/share/icons`:
 
 ```bash
-.venv/bin/win2x11cursor MyCursorTheme --install --force
+win2x11cursor MyCursorTheme --install --force
 ```
 
 Show CLI help:
 
 ```bash
-.venv/bin/win2x11cursor --help
+win2x11cursor --help
 ```
 
 ## Generated theme layout

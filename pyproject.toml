@@ -4,13 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "win2x11cursor"
-version = "0.1.0"
+version = "1.0.0"
 description = "Convert Windows cursor themes into installable X11/Xcursor themes"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
   "win2xcur>=0.2.0,<0.3",
 ]
+keywords = ["cursor", "xcursor", "windows", "x11", "theme"]
+
+[project.urls]
+Homepage = "https://github.com/tantaihaha4487/win2x11cursor"
+Repository = "https://github.com/tantaihaha4487/win2x11cursor"
 
 [project.scripts]
 win2x11cursor = "win2x11cursor.cli:main"
