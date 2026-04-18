@@ -8,6 +8,8 @@ version = "1.0.0"
 description = "Convert Windows cursor themes into installable X11/Xcursor themes"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 dependencies = [
   "win2xcur>=0.2.0,<0.3",
 ]
