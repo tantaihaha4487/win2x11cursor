@@ -66,6 +66,18 @@ class ResolveInfPathTests(unittest.TestCase):
 
             self.assertEqual(resolve_inf_path(root), expected)
 
+    def test_prefers_windows_install_inf_over_static_install_inf(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            static_inf = root / "Static" / "install.inf"
+            expected = root / "Windows" / "install.inf"
+            static_inf.parent.mkdir(parents=True)
+            expected.parent.mkdir(parents=True)
+            static_inf.write_text("[DefaultInstall]\n", encoding="utf-8")
+            expected.write_text("[DefaultInstall]\n", encoding="utf-8")
+
+            self.assertEqual(resolve_inf_path(root), expected)
+
     def test_errors_when_multiple_non_install_inf_files_exist(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -171,6 +183,24 @@ class ResolveSourceTests(unittest.TestCase):
                 self.assertTrue(inf_path.exists())
                 self.assertEqual(inf_path.name, "install.inf")
                 self.assertEqual(inf_path.parent.name, "theme")
+
+    def test_extracts_local_zip_and_prefers_windows_install_inf(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            archive_path = root / "theme.zip"
+            archive_path.write_bytes(
+                make_zip_bytes(
+                    {
+                        "theme/Static/install.inf": "[DefaultInstall]\n",
+                        "theme/Windows/install.inf": "[DefaultInstall]\n",
+                    }
+                )
+            )
+
+            with resolve_source(str(archive_path)) as inf_path:
+                self.assertTrue(inf_path.exists())
+                self.assertEqual(inf_path.name, "install.inf")
+                self.assertEqual(inf_path.parent.name, "Windows")
 
     def test_downloads_zip_from_url(self) -> None:
         archive_bytes = make_zip_bytes({"theme/install.inf": "[DefaultInstall]\n"})

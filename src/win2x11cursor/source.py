@@ -96,9 +96,22 @@ def resolve_inf_path(source: Path) -> Path:
     ]
     if len(install_inf_files) == 1:
         return install_inf_files[0]
+    if len(install_inf_files) > 1:
+        return choose_install_inf(source, install_inf_files)
 
     if not inf_files:
         raise FileNotFoundError(f"No .inf file found in: {source}")
 
     names = ", ".join(str(path.relative_to(source)) for path in inf_files)
     raise RuntimeError(f"Multiple .inf files found in {source}: {names}")
+
+
+def choose_install_inf(source: Path, candidates: list[Path]) -> Path:
+    return min(candidates, key=lambda path: install_inf_sort_key(source, path))
+
+
+def install_inf_sort_key(source: Path, path: Path) -> tuple[int, int, str]:
+    relative_path = path.relative_to(source)
+    parts = tuple(part.casefold() for part in relative_path.parts[:-1])
+    prefers_windows = 0 if "windows" in parts else 1
+    return prefers_windows, len(relative_path.parts), str(relative_path)
